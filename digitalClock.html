@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern 3D Digital Clock</title>
+  <style>
+    body {
+      /* Center the clock on the page and add a futuristic background */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+    }
+
+    .clock-frame {
+      /* Add a modern 3D frame around the digital clock */
+      perspective: 1000px;
+    }
+
+    .digital-clock {
+      /* Style the digital clock with 3D effect and glowing animation */
+      background: #111;
+      border: 8px solid #0ff;
+      border-radius: 20px;
+      padding: 20px 50px;
+      font-size: 4em;
+      font-weight: bold;
+      color: #0ff;
+      text-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5), 0 0 80px rgba(0, 255, 255, 0.7);
+      display: inline-block;
+      transform: rotateX(15deg) rotateY(-15deg);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: rotateX(15deg) rotateY(-15deg) translateY(0px);
+      }
+      50% {
+        transform: rotateX(15deg) rotateY(-15deg) translateY(-20px);
+      }
+    }
+
+    .glow-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .glow-particles span {
+      position: absolute;
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      animation: glow 10s linear infinite;
+    }
+
+    @keyframes glow {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(calc(100vh + 20px)) translateX(calc(100vw - 50px));
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-particles" id="glow-particles"></div>
+  <div class="clock-frame" id="clock-frame">
+    <div class="digital-clock" id="digital-clock">
+      00:00:00.000
+    </div>
+  </div>
+
+  <script>
+    // Function to update clock display
+    function updateClockDisplay() {
+      // Get the current time
+      const now = new Date();
+
+      // Extract hours, minutes, seconds, and milliseconds
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+
+      // Format the time string
+      const timeString = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+      // Update the clock display
+      document.getElementById('digital-clock').textContent = timeString;
+    }
+
+    // Function to create glowing particles animation
+    function createParticles() {
+      const particlesContainer = document.getElementById('glow-particles');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('span');
+        const size = Math.random() * 4 + 2;
+        const posX = Math.random() * window.innerWidth;
+        const delay = Math.random() * 5;
+        const duration = Math.random() * 10 + 5;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${posX}px`;
+        particle.style.animationDelay = `${delay}s`;
+        particle.style.animationDuration = `${duration}s`;
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Function to make clock face the mouse cursor
+    document.addEventListener('mousemove', (e) => {
+      const clockFrame = document.getElementById('clock-frame');
+      const rect = clockFrame.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      const angleX = deltaY / 20;
+      const angleY = -deltaX / 20;
+      clockFrame.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
+    });
+
+    // Update the clock every millisecond
+    setInterval(updateClockDisplay, 1);
+    // Set the initial clock state
+    updateClockDisplay();
+    // Create glowing particles
+    createParticles();
+  </script>
+</body>
+</html>
